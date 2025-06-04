@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                             .apply();
                     }
                     
-                    Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
+                    Intent intent = new Intent(MainActivity.this, UserHomeActivity.class);
                     intent.putExtra("USERNAME", username);
                     startActivity(intent);
                     finish();

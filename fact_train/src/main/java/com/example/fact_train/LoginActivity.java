@@ -62,6 +62,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void performLogin(String username, String password) {
+        // 添加输入验证
+        if(username.isEmpty() || password.isEmpty()) {
+            runOnUiThread(() -> 
+                Toast.makeText(this, "用户名和密码不能为空", Toast.LENGTH_SHORT).show());
+            return;
+        }
+        
+        // 添加密码强度检查
+        if(password.length() < 6) {
+            runOnUiThread(() -> 
+                Toast.makeText(this, "密码长度不能少于6位", Toast.LENGTH_SHORT).show());
+            return;
+        }
         // 实现登录逻辑
         new Thread(() -> {
             UserDao userDao = new UserDao();
@@ -77,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         // 普通用户登录
                         Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(this, SuccessActivity.class));
+                        startActivity(new Intent(this, UserHomeActivity.class));
                     }
                     finish();
                 } else {

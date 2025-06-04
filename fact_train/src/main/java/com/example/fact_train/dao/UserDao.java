@@ -142,6 +142,24 @@ public class UserDao{
             try { if(con != null) con.close(); } catch (SQLException ex) {}
         }
     }
+
+    
+//    public List<Product> getUserProducts(String username) {
+//        // 查询用户商品列表逻辑
+//    }
+//
+//    public boolean publishProduct(String username, Product product) {
+//        // 发布商品逻辑
+//    }
+//
+//    public boolean logout(String username) {
+//        // 清除服务器端会话信息
+//        return true;
+//    }
+
+
+
+
 }
 
 
