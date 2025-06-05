@@ -89,24 +89,73 @@ public class MainActivity extends AppCompatActivity {
             UserDao userDao = new UserDao();
             boolean success = userDao.validateUser(username, password);
             
-            runOnUiThread(() -> {
-                if(success) {
-                    // 保存凭证
-                    if(cbRemember.isChecked()) {
-                        sp.edit()
-                            .putString("username", username)
-                            .putString("password", password)
-                            .apply();
-                    }
+        //     runOnUiThread(() -> {
+        //         if(success) {
+        //             // 保存凭证
+        //             if(cbRemember.isChecked()) {
+        //                 sp.edit()
+        //                     .putString("username", username)
+        //                     .putString("password", password)
+        //                     .apply();
+        //             }
                     
-                    Intent intent = new Intent(MainActivity.this, UserHomeActivity.class);
+        //             Intent intent = new Intent(MainActivity.this, UserHomeActivity.class);
+        //             intent.putExtra("USERNAME", username);
+        //             startActivity(intent);
+        //             finish();
+        //         } else {
+        //             Toast.makeText(MainActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+        //         }
+        //     });
+        // }).start();
+
+        runOnUiThread(() -> {
+            if(success) {
+
+                if(cbRemember.isChecked()) {
+                                    sp.edit()
+                                        .putString("username", username)
+                                       .putString("password", password)
+                                      .apply();
+                                 }
+
+                // 检查是否是admin账号
+                if(username.equals("admin") && password.equals("12345678")) {
+                    // 跳转到管理员界面
+//                   Toast.makeText(this, "管理员登录成功", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                     intent.putExtra("USERNAME", username);
                     startActivity(intent);
                     finish();
+
                 } else {
-                    Toast.makeText(MainActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+
+                    if(cbRemember.isChecked()) {
+                        sp.edit()
+                                .putString("username", username)
+                                .putString("password", password)
+                                .apply();
+                    }
+
+                    // 普通用户登录
+                    Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
+                                 intent.putExtra("USERNAME", username);
+                                 startActivity(intent);
+                    finish();
+
                 }
-            });
-        }).start();
+
+
+
+            } else {
+                Toast.makeText(this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }).start();
+
+        
     }
+
+
+
 }

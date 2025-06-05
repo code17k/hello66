@@ -26,7 +26,7 @@ public class ProfileFragment extends Fragment {
                     .apply();
             
             // 返回登录页面
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
             getActivity().finish();
         });

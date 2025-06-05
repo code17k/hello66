@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="20dp"
+    android:gravity="center">
 
     <TextView
         android:id="@+id/tvAdminWelcome"
@@ -12,6 +13,13 @@
         android:textSize="24sp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="32dp"/>
+
+    <Button
+        android:id="@+id/btnLogout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="退出登录"
+        android:layout_marginTop="30dp"/>
 
     <!-- 这里可以添加管理员特有的UI组件 -->
 
