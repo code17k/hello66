@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微短剧传播效果影响因素分析与预测模型</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="content-wrapper">
+    <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[rgba(10,15,26,0.85)] border-b border-[var(--border)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-bold text-sm">微短剧传播效果研究</div>
+              <div class="text-xs text-[var(--muted)]">毕业设计成果展示</div>
+            </div>
+          </div>
+          
+          <div class="hidden md:flex items-center gap-1">
+            <a href="#overview" class="nav-item active">研究概述</a>
+            <a href="#factors" class="nav-item">影响因素</a>
+            <a href="#prediction" class="nav-item">预测模型</a>
+            <a href="#visualization" class="nav-item">可视化</a>
+            <a href="#conclusion" class="nav-item">研究结论</a>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button id="export-report" class="btn-secondary text-sm py-2 px-4 hidden sm:flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              导出报告
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section id="overview" class="min-h-screen flex items-center justify-center pt-16 hero-gradient grid-bg relative">
+      <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--accent)] opacity-5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[var(--accent-secondary)] opacity-5 rounded-full blur-3xl"></div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative">
+        <div class="text-center mb-16 reveal">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.3)] mb-8">
+            <span class="w-2 h-2 rounded-full bg-[var(--accent)] pulse"></span>
+            <span class="text-sm text-[var(--accent)]">华南农业大学珠江学院 计算机科学与技术</span>
+          </div>
+          
+          <h1 class="hero-title text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            微短剧传播效果<br/>
+            <span class="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-secondary)] bg-clip-text text-transparent">影响因素分析与预测模型</span>
+          </h1>
+          
+          <p class="text-lg md:text-xl text-[var(--muted)] max-w-3xl mx-auto mb-10 leading-relaxed">
+            基于机器学习算法，构建多维度影响因素体系，实现微短剧传播效果的量化分析与精准预测
+          </p>
+          
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button class="btn-primary" onclick="scrollToSection('prediction')">
+              <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                在线预测演示
+              </span>
+            </button>
+            <button class="btn-secondary" onclick="scrollToSection('factors')">
+              查看影响因素分析
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 reveal" style="transition-delay: 0.2s">
+          <div class="card p-6 text-center">
+            <div class="text-3xl md:text-4xl font-bold text-[var(--accent)] mb-2 font-mono" id="stat-samples">0</div>
+            <div class="text-sm text-[var(--muted)]">样本数据量</div>
+            <div class="mt-3 progress-bar">
+              <div class="progress-fill bg-gradient-to-r from-[var(--accent)] to-[var(--accent-secondary)]" style="width: 0%" data-target="100"></div>
+            </div>
+          </div>
+          <div class="card p-6 text-center">
+            <div class="text-3xl md:text-4xl font-bold text-[var(--accent-secondary)] mb-2 font-mono" id="stat-factors">0</div>
+            <div class="text-sm text-[var(--muted)]">关键影响因素</div>
+            <div class="mt-3 progress-bar">
+              <div class="progress-fill bg-gradient-to-r from-[var(--accent-secondary)] to-[var(--accent)]" style="width: 0%" data-target="85"></div>
+            </div>
+          </div>
+          <div class="card p-6 text-center">
+            <div class="text-3xl md:text-4xl font-bold text-[var(--warning)] mb-2 font-mono" id="stat-r2">0</div>
+            <div class="text-sm text-[var(--muted)]">模型R²值</div>
+            <div class="mt-3 progress-bar">
+              <div class="progress-fill bg-gradient-to-r from-[var(--warning)] to-orange-400" style="width: 0%" data-target="92"></div>
+            </div>
+          </div>
+          <div class="card p-6 text-center">
+            <div class="text-3xl md:text-4xl font-bold text-pink-400 mb-2 font-mono" id="stat-accuracy">0</div>
+            <div class="text-sm text-[var(--muted)]">预测准确率</div>
+            <div class="mt-3 progress-bar">
+              <div class="progress-fill bg-gradient-to-r from-pink-400 to-rose-400" style="width: 0%" data-target="89"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-16 reveal" style="transition-delay: 0.4s">
+          <div class="card p-8">
+            <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-[var(--accent)] bg-opacity-20 flex items-center justify-center">
+                <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+              </div>
+              研究框架
+            </h3>
+            <div class="grid md:grid-cols-4 gap-4">
+              <div class="relative p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)]">
+                <div class="absolute -top-3 left-4 px-2 py-0.5 bg-[var(--accent)] text-xs font-bold rounded text-white">01</div>
+                <div class="font-semibold mt-2 mb-2">数据采集</div>
+                <div class="text-sm text-[var(--muted)]">多平台API与爬虫采集，覆盖抖音、快手等主流平台</div>
+              </div>
+              <div class="relative p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)]">
+                <div class="absolute -top-3 left-4 px-2 py-0.5 bg-[var(--accent-secondary)] text-xs font-bold rounded text-white">02</div>
+                <div class="font-semibold mt-2 mb-2">因素分析</div>
+                <div class="text-sm text-[var(--muted)]">Pearson相关性与多元回归，识别关键影响因素</div>
+              </div>
+              <div class="relative p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)]">
+                <div class="absolute -top-3 left-4 px-2 py-0.5 bg-[var(--warning)] text-xs font-bold rounded text-white">03</div>
+                <div class="font-semibold mt-2 mb-2">模型构建</div>
+                <div class="text-sm text-[var(--muted)]">线性回归、随机森林、LightGBM三模型对比</div>
+              </div>
+              <div class="relative p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)]">
+                <div class="absolute -top-3 left-4 px-2 py-0.5 bg-pink-500 text-xs font-bold rounded text-white">04</div>
+                <div class="font-semibold mt-2 mb-2">效果预测</div>
+                <div class="text-sm text-[var(--muted)]">多指标评估验证，支持在线实时预测</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="factors" class="py-24 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 reveal">
+          <span class="tag tag-accent mb-4">核心研究成果</span>
+          <h2 class="section-title text-3xl md:text-4xl font-bold mb-4">传播效果影响因素体系</h2>
+          <p class="text-[var(--muted)] max-w-2xl mx-auto">通过文献计量分析与专家访谈，从四大维度筛选出影响微短剧传播效果的关键因素</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-12">
+          <div class="factor-card factor-content reveal">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-[var(--accent)] bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-bold mb-2">内容属性</h3>
+                <p class="text-sm text-[var(--muted)] mb-4">决定内容本身的吸引力与用户观看意愿</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="tag tag-accent">题材类型</span>
+                  <span class="tag tag-accent">时长</span>
+                  <span class="tag tag-accent">叙事节奏</span>
+                  <span class="tag tag-accent">钩子时长</span>
+                  <span class="tag tag-accent">冲突密度</span>
+                  <span class="tag tag-accent">封面设计</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="factor-card factor-platform reveal" style="transition-delay: 0.1s">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-[var(--accent-secondary)] bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-[var(--accent-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-bold mb-2">平台特征</h3>
+                <p class="text-sm text-[var(--muted)] mb-4">影响内容分发效率与触达范围</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="tag tag-secondary">推荐机制</span>
+                  <span class="tag tag-secondary">分发渠道</span>
+                  <span class="tag tag-secondary">发布时段</span>
+                  <span class="tag tag-secondary">话题运营</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="factor-card factor-user reveal" style="transition-delay: 0.2s">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-[var(--warning)] bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-[var(--warning)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-bold mb-2">用户画像</h3>
+                <p class="text-sm text-[var(--muted)] mb-4">决定目标受众匹配度与互动行为</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="tag tag-warning">年龄分布</span>
+                  <span class="tag tag-warning">性别比例</span>
+                  <span class="tag tag-warning">兴趣标签</span>
+                  <span class="tag tag-warning">消费能力</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="factor-card factor-external reveal" style="transition-delay: 0.3s">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-pink-500 bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-bold mb-2">外部环境</h3>
+                <p class="text-sm text-[var(--muted)] mb-4">影响传播时效性与社会关注度</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="tag" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">政策导向</span>
+                  <span class="tag" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">热点关联</span>
+                  <span class="tag" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">季节因素</span>
+                  <span class="tag" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">竞品分析</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-8 reveal" style="transition-delay: 0.4s">
+          <h3 class="text-xl font-bold mb-6">关键影响因素重要性排名</h3>
+          <div class="space-y-4" id="factor-ranking">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="prediction" class="py-24 bg-[var(--bg-elevated)] relative">
+      <div class="absolute inset-0 grid-bg opacity-50"></div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="text-center mb-16 reveal">
+          <span class="tag tag-secondary mb-4">交互演示</span>
+          <h2 class="section-title text-3xl md:text-4xl font-bold mb-4">传播效果预测模型</h2>
+          <p class="text-[var(--muted)] max-w-2xl mx-auto">输入微短剧特征参数，实时预测传播效果指标</p>
+        </div>
+
+        <div class="grid lg:grid-cols-5 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <div class="card p-6 reveal">
+              <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                参数输入
+              </h3>
+              
+              <div class="space-y-5">
+                <div>
+                  <label class="block text-sm font-medium mb-2">题材类型</label>
+                  <select id="genre-select" class="input-field cursor-pointer">
+                    <option value="urban">都市情感</option>
+                    <option value="fantasy">奇幻玄幻</option>
+                    <option value="rural">乡村题材</option>
+                    <option value="suspense">悬疑推理</option>
+                    <option value="comedy">喜剧搞笑</option>
+                    <option value="history">古装历史</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    单集时长: <span id="duration-value" class="text-[var(--accent)] font-mono">90</span> 秒
+                  </label>
+                  <input type="range" id="duration-slider" class="slider-track" min="30" max="180" value="90">
+                  <div class="flex justify-between text-xs text-[var(--muted)] mt-1">
+                    <span>30秒</span>
+                    <span>180秒</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    钩子时长: <span id="hook-value" class="text-[var(--accent)] font-mono">10</span> 秒
+                  </label>
+                  <input type="range" id="hook-slider" class="slider-track" min="3" max="20" value="10">
+                  <div class="flex justify-between text-xs text-[var(--muted)] mt-1">
+                    <span>3秒</span>
+                    <span>20秒</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    叙事节奏: <span id="pacing-value" class="text-[var(--accent)] font-mono">中速</span>
+                  </label>
+                  <input type="range" id="pacing-slider" class="slider-track" min="1" max="5" value="3">
+                  <div class="flex justify-between text-xs text-[var(--muted)] mt-1">
+                    <span>缓慢</span>
+                    <span>极快</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    冲突密度: <span id="conflict-value" class="text-[var(--accent)] font-mono">60</span>%
+                  </label>
+                  <input type="range" id="conflict-slider" class="slider-track" min="20" max="100" value="60">
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-2">发布时段</label>
+                  <select id="time-select" class="input-field cursor-pointer">
+                    <option value="morning">早高峰 (7-9点)</option>
+                    <option value="lunch">午休时段 (11-13点)</option>
+                    <option value="evening" selected>晚高峰 (18-21点)</option>
+                    <option value="night">深夜时段 (22-24点)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-2">发布平台</label>
+                  <div class="grid grid-cols-2 gap-2">
+                    <label class="flex items-center gap-2 p-3 rounded-lg bg-[var(--bg)] border border-[var(--border)] cursor-pointer hover:border-[var(--accent)] transition-colors">
+                      <input type="checkbox" id="platform-douyin" checked class="accent-[var(--accent)]">
+                      <span class="text-sm">抖音</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-3 rounded-lg bg-[var(--bg)] border border-[var(--border)] cursor-pointer hover:border-[var(--accent)] transition-colors">
+                      <input type="checkbox" id="platform-kuaishou" class="accent-[var(--accent)]">
+                      <span class="text-sm">快手</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-3 rounded-lg bg-[var(--bg)] border border-[var(--border)] cursor-pointer hover:border-[var(--accent)] transition-colors">
+                      <input type="checkbox" id="platform-weixin" class="accent-[var(--accent)]">
+                      <span class="text-sm">微信视频号</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-3 rounded-lg bg-[var(--bg)] border border-[var(--border)] cursor-pointer hover:border-[var(--accent)] transition-colors">
+                      <input type="checkbox" id="platform-bilibili" class="accent-[var(--accent)]">
+                      <span class="text-sm">B站</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-6 reveal" style="transition-delay: 0.1s">
+              <h3 class="text-lg font-bold mb-4">预测模型</h3>
+              <div class="model-selector">
+                <div class="model-option selected" data-model="lightgbm">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="font-semibold">LightGBM</div>
+                      <div class="text-xs text-[var(--muted)]">推荐 · 准确率高</div>
+                    </div>
+                    <span class="tag tag-accent text-xs">最优</span>
+                  </div>
+                </div>
+                <div class="model-option" data-model="rf">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="font-semibold">随机森林</div>
+                      <div class="text-xs text-[var(--muted)]">可解释性强</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="model-option" data-model="lr">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="font-semibold">线性回归</div>
+                      <div class="text-xs text-[var(--muted)]">基准模型</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button id="predict-btn" class="btn-primary w-full py-4 reveal" style="transition-delay: 0.2s">
+              <span class="flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                开始预测
+              </span>
+            </button>
+          </div>
+
+          <div class="lg:col-span-3 space-y-6">
+            <div class="card p-6 reveal" style="transition-delay: 0.15s">
+              <h3 class="text-lg font-bold mb-6">预测结果</h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)]">
+                  <div class="text-3xl font-bold text-[var(--accent)] font-mono mb-1" id="result-views">--</div>
+                  <div class="text-sm text-[var(--muted)]">预计播放量(万)</div>
+                </div>
+                <div class="text-center p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)]">
+                  <div class="text-3xl font-bold text-[var(--accent-secondary)] font-mono mb-1" id="result-completion">--</div>
+                  <div class="text-sm text-[var(--muted)]">预计完播率</div>
+                </div>
+                <div class="text-center p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)]">
+                  <div class="text-3xl font-bold text-[var(--warning)] font-mono mb-1" id="result-engagement">--</div>
+                  <div class="text-sm text-[var(--muted)]">预计互动率</div>
+                </div>
+                <div class="text-center p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)]">
+                  <div class="text-3xl font-bold text-pink-400 font-mono mb-1" id="result-fans">--</div>
+                  <div class="text-sm text-[var(--muted)]">预计粉丝转化</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-6 reveal" style="transition-delay: 0.25s">
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-bold">预测值可视化</h3>
+                <div class="flex gap-4 text-sm">
+                  <span class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[var(--accent)]"></span>
+                    预测值
+                  </span>
+                  <span class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[var(--muted)]"></span>
+                    行业均值
+                  </span>
+                </div>
+              </div>
+              <div class="chart-wrapper h-72">
+                <canvas id="prediction-chart"></canvas>
+              </div>
+            </div>
+
+            <div class="card p-6 reveal" style="transition-delay: 0.35s">
+              <h3 class="text-lg font-bold mb-6">模型性能对比</h3>
+              <div class="overflow-x-auto">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>模型</th>
+                      <th>RMSE</th>
+                      <th>MAE</th>
+                      <th>R²</th>
+                      <th>训练时间</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="font-semibold">LightGBM</td>
+                      <td class="font-mono text-[var(--accent)]">0.082</td>
+                      <td class="font-mono text-[var(--accent)]">0.065</td>
+                      <td class="font-mono text-[var(--accent)]">0.923</td>
+                      <td class="font-mono">1.2s</td>
+                    </tr>
+                    <tr>
+                      <td class="font-semibold">随机森林</td>
+                      <td class="font-mono">0.098</td>
+                      <td class="font-mono">0.078</td>
+                      <td class="font-mono">0.891</td>
+                      <td class="font-mono">3.5s</td>
+                    </tr>
+                    <tr>
+                      <td class="font-semibold">线性回归</td>
+                      <td class="font-mono">0.134</td>
+                      <td class="font-mono">0.112</td>
+                      <td class="font-mono">0.812</td>
+                      <td class="font-mono">0.3s</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="visualization" class="py-24 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 reveal">
+          <span class="tag tag-warning mb-4">数据分析</span>
+          <h2 class="section-title text-3xl md:text-4xl font-bold mb-4">可视化分析</h2>
+          <p class="text-[var(--muted)] max-w-2xl mx-auto">多维度展示微短剧传播效果的关键发现</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+          <div class="card p-6 reveal">
+            <h3 class="text-lg font-bold mb-6">因素相关性热力图</h3>
+            <div class="chart-wrapper h-80">
+              <canvas id="heatmap-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="card p-6 reveal" style="transition-delay: 0.1s">
+            <h3 class="text-lg font-bold mb-6">样本平台分布</h3>
+            <div class="chart-wrapper h-80">
+              <canvas id="platform-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="card p-6 reveal" style="transition-delay: 0.2s">
+            <h3 class="text-lg font-bold mb-6">不同题材传播效果对比</h3>
+            <div class="chart-wrapper h-80">
+              <canvas id="genre-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="card p-6 reveal" style="transition-delay: 0.3s">
+            <h3 class="text-lg font-bold mb-6">发布时段效果分析</h3>
+            <div class="chart-wrapper h-80">
+              <canvas id="time-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="conclusion" class="py-24 bg-[var(--bg-elevated)] relative">
+      <div class="absolute inset-0 grid-bg opacity-50"></div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="text-center mb-16 reveal">
+          <span class="tag tag-accent mb-4">研究成果</span>
+          <h2 class="section-title text-3xl md:text-4xl font-bold mb-4">研究结论与建议</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+          <div class="card p-8 reveal flow-border">
+            <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-[var(--accent)] bg-opacity-20 flex items-center justify-center">
+                <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+              </div>
+              主要发现
+            </h3>
+            <ul class="space-y-4 text-[var(--muted)]">
+              <li class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-[var(--accent)] bg-opacity-20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="text-xs font-bold text-[var(--accent)]">1</span>
+                </span>
+                <span>内容质量对传播效果的影响显著高于技术形态与传播策略，验证了"内容为王"的核心逻辑</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-[var(--accent)] bg-opacity-20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="text-xs font-bold text-[var(--accent)]">2</span>
+                </span>
+                <span>钩子时长在15秒内效果最佳，冲突密度是影响完播率的核心因素</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-[var(--accent)] bg-opacity-20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="text-xs font-bold text-[var(--accent)]">3</span>
+                </span>
+                <span>都市情感题材传播效果最佳，奇幻题材存在负向影响</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-[var(--accent)] bg-opacity-20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="text-xs font-bold text-[var(--accent)]">4</span>
+                </span>
+                <span>晚高峰(18-21点)发布的内容平均传播效果高于其他时段32%</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card p-8 reveal flow-border" style="transition-delay: 0.1s">
+            <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-[var(--accent-secondary)] bg-opacity-20 flex items-center justify-center">
+                <svg class="w-6 h-6 text-[var(--accent-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              实践建议
+            </h3>
+            <ul class="space-y-4 text-[var(--muted)]">
+              <li class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-[var(--accent-secondary)] bg-opacity-20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="text-xs font-bold text-[var(--accent-secondary)]">1</span>
+                </span>
+                <span>优化叙事结构，采用平民化线性叙事，控制场景数量</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-[var(--accent-secondary)] bg-opacity-20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="text-xs font-bold text-[var(--accent-secondary)]">2</span>
+                </span>
+                <span>在视频前15秒设置强钩子，快速建立情感连接</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-[var(--accent-secondary)] bg-opacity-20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="text-xs font-bold text-[var(--accent-secondary)]">3</span>
+                </span>
+                <span>优先选择晚高峰时段发布，配合话题运营提升初始流量</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-[var(--accent-secondary)] bg-opacity-20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="text-xs font-bold text-[var(--accent-secondary)]">4</span>
+                </span>
+                <span>建立数据驱动的选题决策机制，利用预测模型指导内容创作</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card p-8 reveal" style="transition-delay: 0.2s">
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-[var(--warning)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                研究局限
+              </h3>
+              <ul class="space-y-2 text-[var(--muted)] text-sm">
+                <li>样本主要来源于抖音平台，跨平台普适性有待验证</li>
+                <li>采用横截面数据，缺乏时间序列动态分析</li>
+                <li>部分主观特征(如叙事节奏)量化存在一定误差</li>
+                <li>未充分考虑政策变化等外部突发事件影响</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+                未来展望
+              </h3>
+              <ul class="space-y-2 text-[var(--muted)] text-sm">
+                <li>扩展多平台数据采集，构建跨平台预测模型</li>
+                <li>引入深度学习模型，提升预测精度</li>
+                <li>开发实时预测API接口，服务行业应用</li>
+                <li>探索AIGC创作特征对传播效果的影响机制</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="py-12 border-t border-[var(--border)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-bold">微短剧传播效果研究</div>
+              <div class="text-sm text-[var(--muted)]">华南农业大学珠江学院 · 尹鹏</div>
+            </div>
+          </div>
+          
+          <div class="text-center text-sm text-[var(--muted)]">
+            计算机科学与技术2202班 · 毕业设计成果展示
+          </div>
+          
+          <div class="text-sm text-[var(--muted)]">
+            指导教师：[导师姓名]
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>
